@@ -16,12 +16,12 @@ public class DipendentiController {
     @Autowired
     private DipendentiService dipendentiService;
 
-    //Creazione Dipendenti
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public Dipendenti saveDipendente(@RequestBody @Validated DipendentiDTO dipendente){
-        return dipendentiService.saveDipendente(dipendente);
-    }
+//    //Creazione Dipendenti
+//    @PostMapping
+//    @ResponseStatus(HttpStatus.CREATED)
+//    public Dipendenti saveDipendente(@RequestBody @Validated DipendentiDTO dipendente){
+//        return dipendentiService.saveDipendente(dipendente);
+//    }
 
     //Modifica Dipendenti
     @PutMapping("/{id}")

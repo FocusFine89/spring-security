@@ -37,5 +37,11 @@ public class ExceptionsHandler {
         return new ErrorsDTO("Problema lato server, rislveremo presto (Non è vero)");
     }
 
+    @ExceptionHandler(UnauthorizedException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ErrorsDTO handleUnauthorizeError(Exception ex){
+        return new ErrorsDTO(ex.getMessage());
+    }
+
 
 }

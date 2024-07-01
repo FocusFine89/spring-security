@@ -18,7 +18,6 @@ public class BadRequestException extends RuntimeException{
     }
 
 
-
     //Metodi
     public List<ObjectError> getErrorList() {
         return errorList;

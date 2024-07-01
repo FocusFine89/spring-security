@@ -67,6 +67,11 @@ public class DipendentiService {
         this.dipendentiRepository.delete(found);
     }
 
+    //Cerca tramite Email
+    public Dipendenti findByEmail(String email){
+        return this.dipendentiRepository.findByEmail(email).orElseThrow(()-> new NotFoundException("Dipendente non trovato"));
+    }
+
 
     //---------DA FARE PER ULTIMO-----------
 
