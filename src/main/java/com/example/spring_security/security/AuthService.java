@@ -25,7 +25,7 @@ public class AuthService {
         Dipendenti dipendente = this.dipendentiService.findByEmail(payload.email());
 
         //1.2 Verifico se la Password combacia con quella del payload
-        if(bcrypt.matches(dipendente.getName(), payload.name())){
+        if(bcrypt.matches(payload.name(), dipendente.getName())){
             //Se è uguale allora genero il Token per il dipendente
             return jwtTools.createToken(dipendente);
         }else{
