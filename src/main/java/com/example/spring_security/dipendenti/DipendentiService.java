@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,6 +17,9 @@ public class DipendentiService {
 
     @Autowired
     DipendentiRepository dipendentiRepository;
+
+    @Autowired
+    PasswordEncoder bcrypt;
 
 //    @Autowired
 //    private Cloudinary cloudinaryUploader;
@@ -31,7 +35,7 @@ public class DipendentiService {
 
         //Ora creiamo un nuovo oggetto Dipendente generando per ora automaticamente l'url dell'immagine profilo
         String url = "https://ui-avatar.com/api/?name" + newDipendente.name() + "+" + newDipendente.surname();
-        Dipendenti dipendente = new Dipendenti(newDipendente.name(), newDipendente.surname(), newDipendente.email());
+        Dipendenti dipendente = new Dipendenti(bcrypt.encode(newDipendente.name()), newDipendente.surname(), newDipendente.email());
         dipendente.setProfileImageUrl(url);
         return dipendentiRepository.save(dipendente);
     }

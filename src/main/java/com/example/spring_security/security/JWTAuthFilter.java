@@ -1,11 +1,17 @@
 package com.example.spring_security.security;
 
+import com.example.spring_security.dipendenti.Dipendenti;
+import com.example.spring_security.dipendenti.DipendentiService;
 import com.example.spring_security.exceptions.UnauthorizedException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.neo4j.Neo4jProperties;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -18,6 +24,9 @@ public class JWTAuthFilter extends OncePerRequestFilter { //<--- IMPORTANTE, est
 
     @Autowired
     private JWTTools jwtTools;
+
+    @Autowired
+    DipendentiService dipendentiService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -34,7 +43,22 @@ public class JWTAuthFilter extends OncePerRequestFilter { //<--- IMPORTANTE, est
         //prendiamo il metodo che abbiamo creato nel file JWTTools
         jwtTools.verifyToken(accessToken);
 
-        //4.Se è tutto okay, proseguiamo con i prossimi controlli
+
+        //Se vogliamo abilitare l'autorizzazione delle richieste dobbiamo informare spring security di chi sia la richiesta (User, Admin o altro..)
+
+        //4.1 Cerchiamo l'utente tramite id (l'id lo troviamo nel payload del Token creato quando un utente si registra o fa il login)
+        String dipendenteId = jwtTools.extractIdFromToken(accessToken);
+        Dipendenti currentDipendente = dipendentiService.findById(Long.parseLong(dipendenteId));
+
+        //4.2 una volta Trovato il Dipendente posso associarlo al Security Context,
+        // praticamente questo equivale ad 'associare' l'utente autenticato alla richiesta corrente
+        Authentication authentication = new UsernamePasswordAuthenticationToken(currentDipendente, null, currentDipendente.getAuthorities());
+        // Il terzo parametro è OBBLIGATORIO se si vuol poter usare i vari @PreAuthorize perché esso contiene la lista dei ruoli dell'utente
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+
+
+        //4.3 Se è tutto okay, proseguiamo con i prossimi controlli
         filterChain.doFilter(request, response); //Vado al prossimo elemento della catena, passandogli la richiesta corrente e l'oggetto response
     }
 
